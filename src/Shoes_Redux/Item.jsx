@@ -46,7 +46,7 @@ let mapDispatchToProps = (dispatch) => {
       };
       dispatch(action);
     }
-    
+
   }
 }
 

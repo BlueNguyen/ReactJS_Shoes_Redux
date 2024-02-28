@@ -1,7 +1,24 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
+import {
+  DECREASE_QUANTITY,
+  INCREASE_QUANTITY,
+  DELETE_SHOE,
+} from "./Redux/constant";
 
- class Cart extends Component {
+class Cart extends Component {
+  handleIncreaseQuantity = (itemId) => {
+    this.props.increaseQuantity(itemId);
+  };
+
+  handleDecreaseQuantity = (itemId) => {
+    this.props.decreaseQuantity(itemId);
+  };
+
+  handleDeleteShoe = (itemId) => {
+    this.props.deleteShoe(itemId);
+  };
+
   render() {
     console.log(this.props);
     return (
@@ -17,7 +34,6 @@ import { connect } from "react-redux";
             </tr>
           </thead>
           <tbody>
-            {/* render with map */}
             {this.props.cart.map((item) => {
               return (
                 <tr key={item.id}>
@@ -26,11 +42,20 @@ import { connect } from "react-redux";
                     <strong>{item.price * item.amount} $</strong>
                   </td>
                   <td>
-                    <button className="btn-dark">-</button>
+                    <button
+                      onClick={() => this.handleDecreaseQuantity(item.id)}
+                      className="btn btn-dark mr-2"
+                    >
+                      -
+                    </button>
                     <strong>{item.amount}</strong>
-                    <button className="btn-warning">+</button>
+                    <button
+                      onClick={() => this.handleIncreaseQuantity(item.id)}
+                      className="btn btn-warning ml-2"
+                    >
+                      +
+                    </button>
                   </td>
-
                   <td>
                     <img
                       src={item.image}
@@ -41,7 +66,12 @@ import { connect } from "react-redux";
                     />
                   </td>
                   <td>
-                    <button className="btn-danger">Delete</button>
+                    <button
+                      onClick={() => this.handleDeleteShoe(item.id)}
+                      className="btn btn-danger"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               );
@@ -53,10 +83,35 @@ import { connect } from "react-redux";
   }
 }
 
-let mapStateToProps = (state) =>{
+let mapStateToProps = (state) => {
   return {
     cart: state.cart,
-  }
-}
+  };
+};
 
-export default connect(mapStateToProps)(Cart);
+let mapDispatchToProps = (dispatch) => {
+  return {
+    increaseQuantity: (itemId) => {
+      dispatch({
+        type: INCREASE_QUANTITY,
+        payload: itemId,
+      });
+    },
+
+    decreaseQuantity: (itemId) => {
+      dispatch({
+        type: DECREASE_QUANTITY,
+        payload: itemId,
+      });
+    },
+
+    deleteShoe: (itemId) => {
+      dispatch({
+        type: DELETE_SHOE,
+        payload: itemId,
+      });
+    },
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Cart);

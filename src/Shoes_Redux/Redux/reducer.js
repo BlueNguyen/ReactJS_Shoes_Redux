@@ -1,3 +1,5 @@
+import { DECREASE_QUANTITY, DELETE_SHOE, INCREASE_QUANTITY } from "./constant";
+
 let initialState = {
   shoeArr: [
     {
@@ -157,33 +159,59 @@ let initialState = {
 };
 
 export let shoeReducer = (state = initialState, action) =>{
-    switch (action.type){
+    switch (action.type) {
       case "VIEW_DETAIL": {
-        state.detail= action.payload;
-        return {...state}
+        state.detail = action.payload;
+        return { ...state };
       }
 
       case "ADD_SHOE": {
         let cloneCart = [...state.cart];
-         let index = cloneCart.findIndex((item) => {
-           return item.id == action.payload.id;
-         });
+        let index = cloneCart.findIndex((item) => {
+          return item.id == action.payload.id;
+        });
 
-         if (index == -1) {
-      // ko tìm thấy => th1
-      // tạo object mới từ object cũ có thêm key amout
-      let newShoe = { ...action.payload, amount: 1 };
-      cloneCart.push(newShoe);
-    } else {
-      // tìm thấy => th2
-      // tăng số lượng lên 1
-      cloneCart[index].amount++;
+        if (index == -1) {
+          
+          let newShoe = { ...action.payload, amount: 1 };
+          cloneCart.push(newShoe);
+        } else {
+          
+          cloneCart[index].amount++;
+        }
+        state.cart = cloneCart;
+        return { ...state };
+      }
+
+      case INCREASE_QUANTITY:
+        return {
+          ...state,
+          cart: state.cart.map((item) =>
+            item.id === action.payload
+              ? { ...item, amount: item.amount + 1 }
+              : item
+          ),
+        };
+
+      case DECREASE_QUANTITY:
+        return {
+          ...state,
+          cart: state.cart.map((item) =>
+            item.id === action.payload
+              ? { ...item, amount: item.amount - 1 }
+              : item
+          ),
+        };
+
+      case DELETE_SHOE:
+        return {
+          ...state,
+          cart: state.cart.filter((item) => item.id !== action.payload),
+        };
+
+      default:
+        return state;
     }
-    state.cart= cloneCart
-    return {...state};
   };
 
-        default: 
-           return state;
-    }
-  };
+  
